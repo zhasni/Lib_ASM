@@ -1,0 +1,49 @@
+%define WRITE				0x2000004
+
+section .data
+	nullstr db "(null)"
+
+section .text
+	global	_ft_putstr
+	global	_ft_strlen_str
+
+_ft_strlen_str:
+	mov rcx, 0
+	cmp rdi, 0
+	je .ret
+
+.loop:
+	cmp byte [rdi + rcx], 0
+	je	.ret
+	inc rcx
+	jmp	.loop
+
+.ret:
+	mov rax, rcx
+	ret
+
+_ft_putstr:
+	mov rax, 0
+	cmp rdi, 0
+	je .null
+	call _ft_strlen_str 
+	mov rsi, rdi
+	mov rdi, 1
+	mov rdx, rax
+	mov rax, WRITE
+	syscall
+	jc .ret
+	ret
+
+.null:
+	mov rax, WRITE
+    mov rdx, 6
+    lea rsi, [rel nullstr]
+    syscall
+    jc .ret
+    mov rax, 10
+    ret
+
+.ret:
+	mov rax, -1
+	ret
